@@ -6,4 +6,4 @@ Team:
 - Anthony Buckley
 - Kevin Street
 
-![](https://github.com/m00tY/datafest2024/assets/pyro-tf2-pyro-handshake.gif)
+![](assets/pyro-tf2-pyro-handshake.gif)
