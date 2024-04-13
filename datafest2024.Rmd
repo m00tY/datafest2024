@@ -1,0 +1,93 @@
+---
+title: "DataFest2024"
+author: "Kevin Street"
+date: "2024-04-13"
+output: html_document
+---
+
+#load data
+```{r}
+setwd("C:/Users/Kevin Street/Desktop/2024 ASA DataFest Data 03-04/Full Data")
+page_views <- read.csv("page_views.csv")
+eoc <- read.csv("checkpoints_eoc.csv")
+pulse <- read.csv("checkpoints_pulse.csv")
+```
+
+#load packages
+```{r}
+library(dplyr)
+library(tidyr)
+library(ggplot2)
+```
+
+#page views
+```{r}
+page_views$book <- as.factor(page_views$book)
+page_views$chapter_number <- as.factor(page_views$chapter_number)
+page_views$institution_id <- as.factor(page_views$institution_id)
+page_views$class_id <- as.factor(page_views$class_id)
+page_views$student_id <- as.factor(page_views$student_id)
+
+str(page_views)
+```
+
+#eoc
+```{r}
+eoc$book <- as.factor(eoc$book)
+eoc$class_id <- as.factor(eoc$class_id)
+eoc$chapter_number <- as.factor(eoc$chapter_number)
+```
+
+
+#eoc_abcd
+```{r}
+eoc_ABCD <- eoc %>% 
+  filter(book == "College / Advanced Statistics and Data Science (ABCD)")
+
+str(eoc_ABCD)
+```
+
+
+#ABCD pages
+```{r}
+#seperate chapter
+ABCD <- page_views %>% 
+  filter(book == "College / Advanced Statistics and Data Science (ABCD)") %>% 
+  select(-release, -page, -section_number, -institution_id, -dt_accessed, -was_complete, -tried_again_dt, -tried_again_clicks, -idle_brief, -idle_long, -off_page_brief, -off_page_long, -review_flag)
+
+str(ABCD)
+
+#each chapter as a variable
+
+```
+
+#pulse
+```{r}
+pulse$book <- as.factor(pulse$book)
+
+pulse_ABCD <- pulse %>% 
+  filter(book == "College / Advanced Statistics and Data Science (ABCD)") %>% 
+  group_by(student_id, chapter_number, construct) %>% 
+  summarise(response = mean(response))
+
+pulse1 <- pulse_ABCD %>% 
+  na.omit() %>% 
+  pivot_wider(names_from = construct, values_from = response, id_cols = c(chapter_number, student_id))
+
+pulse1 <- pulse1 %>% 
+  na.omit() %>% 
+  group_by(student_id) %>% 
+  summarise(Cost = mean(Cost),
+            Expectancy = mean(Expectancy),
+            `Intrinsic Value` = mean(`Intrinsic Value`),
+            `Utility Value` = mean(`Utility Value`))
+```
+
+
+
+
+
+
+
+
+
