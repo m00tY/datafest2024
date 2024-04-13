@@ -6,4 +6,4 @@ Team:
 - Anthony Buckley
 - Kevin Street
 
-https://tenor.com/bQPs5.gif
+![](https://github.com/m00ty/datafest2024/assets/pyro-tf2-pyro-handshake.gif)
