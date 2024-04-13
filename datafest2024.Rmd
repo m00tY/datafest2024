@@ -60,9 +60,9 @@ str(ABCD)
 pulse$book <- as.factor(pulse$book)
 
 pulse_ABCD <- pulse %>% 
-  filter(book == "College / Advanced Statistics and Data Science (ABCD)") %>% 
-  group_by(student_id, chapter_number, construct) %>% 
-  summarise(response = mean(response))
+  filter(book == "College / Advanced Statistics and Data Science (ABCD)") #%>% 
+  #group_by(student_id, chapter_number, construct) %>% 
+  #summarise(response = mean(response))
 
 pulse1 <- pulse_ABCD %>% 
   na.omit() %>% 
@@ -93,11 +93,15 @@ print(pulse1noStudent_kmeans_result)
 pulse1noStudent_cluster_assignments <- pulse1noStudent_kmeans_result$cluster
 fviz_cluster(data=pulse1noStudent, kmeans(na.omit(pulse1noStudent), centers = 2, iter.max=100, nstart=100))
 
-#print(pulse1_cluster_assignments)
+
 ```
 
+# EOC and Pulse Correlation
+```{r}
 
 
+
+```
 
 
 
