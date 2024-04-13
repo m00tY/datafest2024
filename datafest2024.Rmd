@@ -1,26 +1,20 @@
----
-title: "DataFest2024"
-author: "Kevin Street"
-date: "2024-04-13"
-output: html_document
----
-
-#load data
+# load data
 ```{r}
-setwd("C:/Users/Kevin Street/Desktop/2024 ASA DataFest Data 03-04/Full Data")
+setwd("~/Desktop/DATAFEST2024 DATA/Full Data")
 page_views <- read.csv("page_views.csv")
 eoc <- read.csv("checkpoints_eoc.csv")
 pulse <- read.csv("checkpoints_pulse.csv")
 ```
 
-#load packages
+# load packages
 ```{r}
 library(dplyr)
 library(tidyr)
 library(ggplot2)
+library(factoextra)
 ```
 
-#page views
+# page views
 ```{r}
 page_views$book <- as.factor(page_views$book)
 page_views$chapter_number <- as.factor(page_views$chapter_number)
@@ -31,7 +25,7 @@ page_views$student_id <- as.factor(page_views$student_id)
 str(page_views)
 ```
 
-#eoc
+# eoc
 ```{r}
 eoc$book <- as.factor(eoc$book)
 eoc$class_id <- as.factor(eoc$class_id)
@@ -39,7 +33,7 @@ eoc$chapter_number <- as.factor(eoc$chapter_number)
 ```
 
 
-#eoc_abcd
+# eoc_abcd
 ```{r}
 eoc_ABCD <- eoc %>% 
   filter(book == "College / Advanced Statistics and Data Science (ABCD)")
@@ -48,7 +42,7 @@ str(eoc_ABCD)
 ```
 
 
-#ABCD pages
+# ABCD pages
 ```{r}
 #seperate chapter
 ABCD <- page_views %>% 
@@ -61,7 +55,7 @@ str(ABCD)
 
 ```
 
-#pulse
+# pulse
 ```{r}
 pulse$book <- as.factor(pulse$book)
 
@@ -83,7 +77,24 @@ pulse1 <- pulse1 %>%
             `Utility Value` = mean(`Utility Value`))
 ```
 
+# Pulse Clustering!!!
+```{r}
+#scaled_pulse <- scale(c(pulse1$Cost, pulse1$Expectancy, pulse1$`Intrinsic Value`, pulse1$`Utility Value`))
 
+pulse1noStudent <- pulse1 %>% 
+    select(-student_id)
+
+#fviz_nbclust(pulse1noStudent, kmeans, method="wss")
+fviz_nbclust(pulse1noStudent, kmeans, method="silhouette")
+#fviz_nbclust(pulse1noStudent, kmeans, method="gap_stat")
+
+pulse1noStudent_kmeans_result <- kmeans(na.omit(pulse1noStudent), centers = 2, iter.max=100, nstart=100)
+print(pulse1noStudent_kmeans_result)
+pulse1noStudent_cluster_assignments <- pulse1noStudent_kmeans_result$cluster
+fviz_cluster(data=pulse1noStudent, kmeans(na.omit(pulse1noStudent), centers = 2, iter.max=100, nstart=100))
+
+#print(pulse1_cluster_assignments)
+```
 
 
 
