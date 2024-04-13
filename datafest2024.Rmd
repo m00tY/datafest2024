@@ -33,36 +33,8 @@ eoc$chapter_number <- as.factor(eoc$chapter_number)
 ```
 
 
-# eoc_abcd
-```{r}
-eoc_ABCD <- eoc %>% 
-  filter(book == "College / Advanced Statistics and Data Science (ABCD)")
-
-str(eoc_ABCD)
-```
-
-
-# ABCD pages
-```{r}
-#seperate chapter
-ABCD <- page_views %>% 
-  filter(book == "College / Advanced Statistics and Data Science (ABCD)") %>% 
-  select(-release, -page, -section_number, -institution_id, -dt_accessed, -was_complete, -tried_again_dt, -tried_again_clicks, -idle_brief, -idle_long, -off_page_brief, -off_page_long, -review_flag)
-
-str(ABCD)
-
-#each chapter as a variable
-
-```
-
 # pulse
 ```{r}
-pulse$book <- as.factor(pulse$book)
-
-pulse_ABCD <- pulse %>% 
-  filter(book == "College / Advanced Statistics and Data Science (ABCD)") #%>% 
-  #group_by(student_id, chapter_number, construct) %>% 
-  #summarise(response = mean(response))
 
 pulse1 <- pulse_ABCD %>% 
   na.omit() %>% 
@@ -84,9 +56,9 @@ pulse1 <- pulse1 %>%
 pulse1noStudent <- pulse1 %>% 
     select(-student_id)
 
-#fviz_nbclust(pulse1noStudent, kmeans, method="wss")
+fviz_nbclust(pulse1noStudent, kmeans, method="wss")
 fviz_nbclust(pulse1noStudent, kmeans, method="silhouette")
-#fviz_nbclust(pulse1noStudent, kmeans, method="gap_stat")
+fviz_nbclust(pulse1noStudent, kmeans, method="gap_stat")
 
 pulse1noStudent_kmeans_result <- kmeans(na.omit(pulse1noStudent), centers = 2, iter.max=100, nstart=100)
 print(pulse1noStudent_kmeans_result)
