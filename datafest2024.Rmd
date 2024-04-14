@@ -1,20 +1,26 @@
+---
+title: "DataFest2024"
+author: "Kevin Street"
+date: "2024-04-13"
+output: html_document
+---
+
 # load data
 ```{r}
-setwd("~/Desktop/DATAFEST2024 DATA/Full Data")
-page_views <- read.csv("page_views.csv")
+setwd("C:/Users/Kevin Street/Desktop/2024 ASA DataFest Data 03-04/Full Data")
+#page_views <- read.csv("page_views.csv")
 eoc <- read.csv("checkpoints_eoc.csv")
 pulse <- read.csv("checkpoints_pulse.csv")
 ```
 
-# load packages
+#load packages
 ```{r}
 library(dplyr)
 library(tidyr)
 library(ggplot2)
-library(factoextra)
 ```
 
-# page views
+#page views
 ```{r}
 page_views$book <- as.factor(page_views$book)
 page_views$chapter_number <- as.factor(page_views$chapter_number)
@@ -25,56 +31,142 @@ page_views$student_id <- as.factor(page_views$student_id)
 str(page_views)
 ```
 
-# eoc
+#eoc
 ```{r}
 eoc$book <- as.factor(eoc$book)
 eoc$class_id <- as.factor(eoc$class_id)
-eoc$chapter_number <- as.factor(eoc$chapter_number)
+
+
+eoc <- eoc %>% 
+  mutate(ratio = n_possible/n_attempt) %>% 
+  mutate(EOC = EOC*100) %>% 
+  select(student_id, chapter_number, EOC, ratio)
 ```
 
 
-# pulse
+#pulse
 ```{r}
+pulse$book <- as.factor(pulse$book)
+pulse$release <- as.factor(pulse$release)
+pulse$student_id <- as.factor(pulse$student_id)
 
-pulse1 <- pulse_ABCD %>% 
+pulse_1_12 <- pulse %>% 
+  filter(chapter_number < 13) %>% 
+  distinct()
+
+#pulse_ABCD <- pulse %>% 
+#  filter(book == "College / Advanced Statistics and Data Science (ABCD)")
+
+#pulse_ABCD_average %>% 
+#  group_by(student_id, chapter_number, construct) %>% 
+#  summarise(response = mean(response))
+
+pulse1 <- pulse_1_12 %>% 
   na.omit() %>% 
   pivot_wider(names_from = construct, values_from = response, id_cols = c(chapter_number, student_id))
 
-pulse1 <- pulse1 %>% 
-  na.omit() %>% 
-  group_by(student_id) %>% 
-  summarise(Cost = mean(Cost),
-            Expectancy = mean(Expectancy),
-            `Intrinsic Value` = mean(`Intrinsic Value`),
-            `Utility Value` = mean(`Utility Value`))
+#pulse1 <- pulse1 %>% 
+#  na.omit() %>% 
+#  group_by(student_id) %>% 
+#  summarise(Cost = mean(Cost),
+#            Expectancy = mean(Expectancy),
+#            `Intrinsic Value` = mean(`Intrinsic Value`),
+#           `Utility Value` = mean(`Utility Value`))
 ```
 
-# Pulse Clustering!!!
+#pulse + eoc
 ```{r}
-#scaled_pulse <- scale(c(pulse1$Cost, pulse1$Expectancy, pulse1$`Intrinsic Value`, pulse1$`Utility Value`))
+pulse_eoc <- pulse1 %>% 
+  inner_join(eoc, by = c("student_id", "chapter_number")) %>% 
+  select(-student_id, -ratio) %>% 
+  na.omit() 
 
-pulse1noStudent <- pulse1 %>% 
-    select(-student_id)
+plot(pulse_eoc$EOC, pulse_eoc$Cost)
+cor.test(pulse_eoc$EOC,pulse_eoc$Cost)
 
-fviz_nbclust(pulse1noStudent, kmeans, method="wss")
-fviz_nbclust(pulse1noStudent, kmeans, method="silhouette")
-fviz_nbclust(pulse1noStudent, kmeans, method="gap_stat")
+plot(pulse_eoc$EOC, pulse_eoc$Expectancy)
+cor.test(pulse_eoc$EOC,pulse_eoc$Expectancy)
 
-pulse1noStudent_kmeans_result <- kmeans(na.omit(pulse1noStudent), centers = 2, iter.max=100, nstart=100)
-print(pulse1noStudent_kmeans_result)
-pulse1noStudent_cluster_assignments <- pulse1noStudent_kmeans_result$cluster
-fviz_cluster(data=pulse1noStudent, kmeans(na.omit(pulse1noStudent), centers = 2, iter.max=100, nstart=100))
+plot(pulse_eoc$EOC, pulse_eoc$`Intrinsic Value`)
+cor.test(pulse_eoc$EOC,pulse_eoc$`Intrinsic Value`)
 
+plot(pulse_eoc$EOC, pulse_eoc$`Utility Value`)
+cor.test(pulse_eoc$EOC,pulse_eoc$`Utility Value`)
 
+#2
+pulse_eoc_2 <- pulse_eoc %>% 
+  filter(chapter_number==2) %>% 
+  select(-chapter_number)
+summary(lm(EOC~., data = pulse_eoc_2))
+
+#3
+pulse_eoc_3 <- pulse_eoc %>% 
+  filter(chapter_number==3) %>% 
+  select(-chapter_number)
+summary(lm(EOC~., data = pulse_eoc_3))
+
+#4
+pulse_eoc_4 <- pulse_eoc %>% 
+  filter(chapter_number==4) %>% 
+  select(-chapter_number)
+summary(lm(EOC~., data = pulse_eoc_4))
+plot(lm(EOC~., data = pulse_eoc_4))
+
+#5
+pulse_eoc_5 <- pulse_eoc %>% 
+  filter(chapter_number==5) %>% 
+  select(-chapter_number)
+summary(lm(EOC~., data = pulse_eoc_5))
+
+#6
+pulse_eoc_6 <- pulse_eoc %>% 
+  filter(chapter_number==6) %>% 
+  select(-chapter_number)
+summary(lm(EOC~., data = pulse_eoc_6))
+
+#7
+pulse_eoc_7 <- pulse_eoc %>% 
+  filter(chapter_number==7) %>% 
+  select(-chapter_number)
+summary(lm(EOC~., data = pulse_eoc_7))
+
+#8
+pulse_eoc_8 <- pulse_eoc %>% 
+  filter(chapter_number==8) %>% 
+  select(-chapter_number)
+summary(lm(EOC~., data = pulse_eoc_8))
+
+#9
+pulse_eoc_9 <- pulse_eoc %>% 
+  filter(chapter_number==9) %>% 
+  select(-chapter_number)
+summary(lm(EOC~., data = pulse_eoc_9))
+
+#10
+pulse_eoc_10 <- pulse_eoc %>% 
+  filter(chapter_number==10) %>% 
+  select(-chapter_number)
+summary(lm(EOC~., data = pulse_eoc_10))
+
+#11
+pulse_eoc_11 <- pulse_eoc %>% 
+  filter(chapter_number==11) %>% 
+  select(-chapter_number)
+summary(lm(EOC~., data = pulse_eoc_11))
+
+#12
+pulse_eoc_12 <- pulse_eoc %>% 
+  filter(chapter_number==12) %>% 
+  select(-chapter_number)
+summary(lm(EOC~., data = pulse_eoc_12))
 ```
 
-# EOC and Pulse Correlation
+#regression
 ```{r}
-
-
-
+pulse_eoc <- pulse_eoc %>% 
+  select(-student_id, -ratio, -chapter_number)
+model <- lm(EOC~., data = pulse_eoc)
+summary(model)
 ```
-
-
 
 
